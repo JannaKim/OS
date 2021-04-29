@@ -18,6 +18,8 @@ struct user_regs_struct regs;
 int main() {
   pid_t child = fork();
   if (child == 0) {
+    ptrace(PTRACE_TRACEME, 0, NULL, NULL);
+    raise(SIGSTOP); 
     /* TODO: 자식 프로세스를 추적 가능하도록 설정 */
     execl("/bin/ls", "ls", NULL);
   } else if (child < 0) {
@@ -26,17 +28,23 @@ int main() {
     int status;
     while (waitpid(child, &status, 0) && !WIFEXITED(status)) {
       /* TODO: 전체 레지스터 값을 가져오기 */
+      ptrace(PTRACE_GETREGS, child, NULL, &regs);
+      //printf("%lld\n",regs.orig_rax);
       fprintf(stderr, "[SYSCALL]:%-20s\t%5lld\n", get_syscode(regs.orig_rax),
               regs.orig_rax);
       /* TODO: 매 시스템 콜 마다 실행을 중단하게끔 설정하기 */
+      ptrace(PTRACE_SYSCALL, child, NULL, NULL);
     }
   }
   return 0;
 }
 
 const char *get_syscode(long code) {
+    printf("hehe %ld\n", code);
   switch (code) {
-    syscode_case(SYS_read);
+    // syscode_case(SYS_read);
+    case SYS_read:
+      return "SYS_read\n";
     syscode_case(SYS_write);
     syscode_case(SYS_close);
     syscode_case(SYS_fstat);
@@ -49,6 +57,8 @@ const char *get_syscode(long code) {
     syscode_case(SYS_rt_sigreturn);
     syscode_case(SYS_ioctl);
     syscode_case(SYS_getpid);
+    syscode_case(SYS_getdents64);
+    syscode_case(SYS_tgkill);
     syscode_case(SYS_pread64);
     syscode_case(SYS_access);
     syscode_case(SYS_pipe);
@@ -62,7 +72,8 @@ const char *get_syscode(long code) {
     syscode_case(SYS_arch_prctl);
     syscode_case(SYS_set_tid_address);
     syscode_case(SYS_set_robust_list);
+    
   default:
-    return "Not registered in the function list.";
+    return "Not registered in the function list.\n";
   }
 }
