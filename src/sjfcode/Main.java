@@ -3,7 +3,6 @@ import java.util.*;
 import java.lang.*;
 
 public class Main {
-
     public static void main(String[] args) {
         //인터페이스는 변수 선언시 타입으로 선언한다.
         Test.setSched(Test.sched);
@@ -47,15 +46,14 @@ class Process implements Comparable<Process> { // shift+ f6
     @Override
     public int compareTo(Process o) {
         return this.amendedArrivalTime - o.amendedArrivalTime;
-    }
-
+    }// comparator comparable
 }
 interface SchedulerInterface {
     boolean setProcess(ArrayList<Process> prs);
     Process nextProcess(int currentTime);
     int execute(int pid);
     boolean isEmpty();
-    }
+}
 
 class SJF implements SchedulerInterface {
     PriorityQueue<Process> pq = new PriorityQueue<>();
@@ -103,7 +101,6 @@ class Test {
     }
 
     static void solve() {
-
         int time = 0;
         ArrayList<Process> procs = new ArrayList<>();
         for(int i = 0; i < 10; i++) {
@@ -135,5 +132,3 @@ class Test {
         }
     }
 }
-
-

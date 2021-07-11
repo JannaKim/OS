@@ -223,7 +223,7 @@ int main() {
 	for (i = 0; i < num_threads; i++) {
 		/* TODO: wait for all created threads */
 		// int valid[num_threads] = {0,};
-		pthread_join(threads[i], (void **)(valid+i)); // 
+		pthread_join(threads[i], &(valid+i)); // 
 		printf("%2dth thread terminated\n", i);
 	}
 
